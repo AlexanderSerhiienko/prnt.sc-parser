@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
-import { generateRandomId, parsePrntScId } from './utils'
-import config from './config'
+import { generateRandomId, parsePrntScId } from './utils.js'
+import config from './config.js'
 const app = express()
 const PORT = process.env.PORT || config.PORT
 
@@ -24,7 +24,7 @@ app.get('/img/:id', async (req, res) => {
   res.end(img)
 })
 
-app.get('/rimg', async (req, res) => {
+app.get('/rimg', async (_, res) => {
   let id
   let src = null
   while (!src) {

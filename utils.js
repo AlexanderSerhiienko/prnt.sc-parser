@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer'
-import { API_URL } from './config'
+import config from './config.js'
 
 const browser = await puppeteer.launch()
 
@@ -36,7 +36,7 @@ export async function parsePrntScId(id) {
       try {
         const imgBuffer = await viewSource.buffer()
         ceche[id] = imgBuffer
-        imageSrc = `${API_URL}/img/${id}`
+        imageSrc = `${config.API_URL}/img/${id}`
       } catch {
         return null
       }
