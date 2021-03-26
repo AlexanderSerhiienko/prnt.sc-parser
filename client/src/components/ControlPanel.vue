@@ -1,13 +1,17 @@
 <template>
-  <div>
-    <span>
-      <h1 class="align-center">prnt.sc parser</h1>
-      <p>Enter the amount of photos</p>
-      <input type="text" v-model="text" @keypress.enter="onSubmit" />
-      <button :disabled="loading" type="submit" @click="onSubmit">X</button>
-      <!-- <input type="checkbox" @change="$emit('scroll-switch')"> -->
-      <Loading v-if="loading" />
-    </span>
+  <div class="wrapper">
+    <div id="scroll-top"></div>
+    <div class="logo">
+      <h1>Prnt.sc <span class="parser">Parser</span></h1>
+    </div>
+    <h3>Enter the amount of photos</h3>
+    <div class="controls">
+      <input type="number" v-model="text" @keypress.enter="onSubmit" />
+      <button :disabled="loading" @click="onSubmit">Find</button>
+    </div>
+    <div v-if="loading" class="indicator">
+      <Loading />
+    </div>
   </div>
 </template>
 <script>
@@ -16,32 +20,98 @@ import Loading from './Loading.vue'
 export default {
   data() {
     return {
-      text: "",
-    };
+      text: ''
+    }
   },
   components: {
     Loading
   },
-  props: ["pictures", 'loading'],
+  props: ['pictures', 'loading'],
   methods: {
     onSubmit() {
       if (this.loading) return
-      this.$emit("start-parsing", parseInt(this.text));
-      this.text = "";
-    },
-  },
-};
+      this.$emit('start-parsing', parseInt(this.text))
+      this.text = ''
+    }
+  }
+}
 </script>
 <style scoped>
-input {
+.indicator {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  height: 50px;
+  width: 50px;
+  background: white;
+  border-radius: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 20px;
+}
+
+.logo {
+  background: linear-gradient(
+    135deg,
+    rgba(166, 238, 72, 0.3) 0%,
+    rgba(11, 111, 244, 0.3) 100%
+  );
+  border-radius: 18px;
+  padding: 15px;
+  width: fit-content;
+  box-shadow: 3px 3px 8px 0px rgba(0, 0, 0, 0.3);
+  color: white;
+}
+
+.logo h1 {
+  margin: 0;
+}
+.parser {
+  color: greenyellow;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.controls input {
+  border-radius: 18px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 0px 10px;
+  width: 50px;
   height: 30px;
 }
-button {
-  background-color:rgb(51, 255, 0);
-  height: 35px;
-   width: 35px;
+.controls button {
+  border-radius: 18px;
+  border: none;
+  outline: none;
+  margin-left: 10px;
+  padding: 9px;
+  cursor: pointer;
+  background: linear-gradient(
+    135deg,
+    rgba(73, 72, 238, 1) 0%,
+    rgba(114, 11, 244, 1) 100%
+  );
+  color: white;
+  text-transform: uppercase;
+  transition: 0.2s;
 }
-p{
-  margin-bottom: 0;
+.controls button:hover {
+  opacity: 0.6;
+}
+.controls button:disabled {
+  opacity: 0.4;
 }
 </style>

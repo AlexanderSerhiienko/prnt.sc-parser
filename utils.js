@@ -1,6 +1,7 @@
 import puppeteer from 'puppeteer'
 import config from './config.js'
-
+import consola from 'consola'
+consola.info('Starting browser instance...')
 const browser = await puppeteer.launch()
 
 export function generateRandomId(size = 6) {
@@ -14,32 +15,24 @@ export function generateRandomId(size = 6) {
 }
 
 export async function parsePrntScId(id) {
-  const page = await browser.newPage()
-  await page.goto(`https://prnt.sc/${id}`)
-  let imageSrc = await page.evaluate(() => {
-    try {
+  try {
+    const page = await browser.newPage()
+    await page.goto(`https://prnt.sc/${id}`)
+    let imageSrc = await page.evaluate(() => {
       const $image = document.querySelector('#screenshot-image')
       const src = $image.getAttribute('src')
       return src
-    } catch {
-      return null
-    }
-  })
-  if (!imageSrc) return null
-  try {
+    })
+    if (!imageSrc) return null
     const viewSource = await page.goto(imageSrc)
     const url = await page.evaluate(() => {
       return window.location.href
     })
     if (url.includes('removed.png')) return null
     if (imageSrc.includes('prntscr')) {
-      try {
-        const imgBuffer = await viewSource.buffer()
-        ceche[id] = imgBuffer
-        imageSrc = `${config.API_URL}/img/${id}`
-      } catch {
-        return null
-      }
+      const imgBuffer = await viewSource.buffer()
+      ceche[id] = imgBuffer
+      imageSrc = `${config.API_URL}/img/${id}`
     }
     return imageSrc
   } catch {

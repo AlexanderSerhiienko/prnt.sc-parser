@@ -1,87 +1,75 @@
 <template>
   <div id="app">
-    <div>
-      <ControlPanel :loading="loading" @start-parsing="startParsing" :picture="pictures" />
-    </div>
-    <div class="picture-box">
-      <PictureBox :pictures="pictures" />
-    </div>
-    <div id="scroll"></div>
+    <ControlPanel
+      :loading="loading"
+      @start-parsing="startParsing"
+      :picture="pictures"
+    />
+    <PictureBox :pictures="pictures" />
   </div>
 </template>
 
 <script>
-import axios from "axios";
-import ControlPanel from "@/components/ControlPanel";
-import PictureBox from "@/components/PictureBox";
+import axios from 'axios'
+import ControlPanel from '@/components/ControlPanel'
+import PictureBox from '@/components/PictureBox'
+import { API_URL } from './config'
 
 export default {
-  name: "App",
+  name: 'App',
   data() {
     return {
       pictures: [],
-      loading: false,
-      el:''
-    };
+      loading: false
+    }
   },
   components: {
     PictureBox,
-    ControlPanel,
+    ControlPanel
   },
   methods: {
     async startParsing(number) {
-      // this.pictures = [];
-      // let id = "";
-      // for (let i = 0; i < number; i++) {
-      //   id = this.generateRandomEndpoint();
-      //   console.log("endPoint: " + endPoint);
-      //   // const res = await axios.get(`http://localhost:3000/${endPoint}`)
-      //   this.pictures.push(`http://localhost:3000/${endPoint}`);
-      //   // .then((res) => {
-      //   //   console.log("response from my server: ");
-      //   //   console.log(res);
-      //   //   this.pictures.push(res.data);
-      //   // });
-      // }
-      // console.log(this.pictures);
       this.pictures = []
       this.loading = true
-      for (let i = 0; i< number; i++) {
-        const {data} = await axios.get(`http://localhost:3000/rimg`)
+      for (let i = 0; i < number; i++) {
+        const { data } = await axios.get(`${API_URL}/rimg`)
         this.pictures.push(data)
-        setTimeout(() => this.scrollBottom(), 300)
+        setTimeout(() => this.scrollBottom(), 100)
       }
+      setTimeout(() => this.scrollTop(), 100)
+
       this.loading = false
     },
     scrollBottom() {
-      this.el=document.getElementById('scroll')
-      this.el.scrollIntoView({behavior: 'smooth'}) 
+      const el = document.getElementById('scroll-bottom')
+      el.scrollIntoView({ behavior: 'smooth' })
     },
-    generateRandomEndpoint() {
-      let result = "";
-      const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
-      const charactersLength = characters.length;
-      for (let i = 0; i < 6; i++) {
-        result += characters.charAt(
-          Math.floor(Math.random() * charactersLength)
-        );
-      }
-      return result;
+    scrollTop() {
+      const el = document.getElementById('scroll-top')
+      el.scrollIntoView({ behavior: 'smooth' })
     }
-  },
-};
+  }
+}
 </script>
 
 <style>
-#app {
-  width: 99.9%;
-  border:2px solid black;
-}
-.picture-box {
-  display: flex;
+html,
+body {
   width: 100%;
-  height: 100%;
-  flex-wrap: wrap;
-  border:2px solid black;
+  height: fit-content;
+  margin: 0;
+  padding: 0;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: white;
+}
+
+html {
+  background: linear-gradient(
+      135deg,
+      rgba(11, 111, 244, 1) 0%,
+      rgba(146, 72, 238, 1) 100%
+    )
+    no-repeat center center / 100% 100%;
 }
 </style>

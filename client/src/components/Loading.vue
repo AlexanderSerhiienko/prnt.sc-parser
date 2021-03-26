@@ -1,13 +1,18 @@
 <template>
-  <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+  <div class="lds-ring">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
 </template>
 
 <style>
 .lds-ring {
   display: inline-block;
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
 }
 .lds-ring div {
   box-sizing: border-box;
@@ -16,10 +21,10 @@
   width: 32px;
   height: 32px;
   /* margin: 8px; */
-  border: 3px solid black;
+  border: 3px solid blueviolet;
   border-radius: 50%;
   animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  border-color: black transparent transparent transparent;
+  border-color: blueviolet transparent transparent transparent;
 }
 .lds-ring div:nth-child(1) {
   animation-delay: -0.45s;

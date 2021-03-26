@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import consola from 'consola'
 import { generateRandomId, parsePrntScId } from './utils.js'
 import config from './config.js'
 const app = express()
@@ -29,14 +30,14 @@ app.get('/rimg', async (_, res) => {
   let src = null
   while (!src) {
     id = generateRandomId()
-    console.log(`Trying to parse id ${id}...`)
+    consola.info(`Trying to parse id ${id}...`)
     src = await parsePrntScId(id)
-    if (!src) console.log('Error during parsing id', id)
+    if (!src) consola.error('Error during parsing id', id)
   }
-  console.log('Parsed id', id, src)
+  consola.success('Parsed id', id, src)
   res.json({ url: src, id })
 })
 
 app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT}`)
+  consola.info(`Server is running on port ${PORT}`)
 })
