@@ -1,8 +1,11 @@
 <template>
   <div class="wrapper">
+    <div class="github">
+      <a href="https://github.com/AlexanderSerhiienko/prnt.sc-parser" target="_blank">GitHub</a>
+    </div>
     <div id="scroll-top"></div>
     <div class="logo">
-      <h1>Prnt.sc <span class="parser">Parser</span></h1>
+      <h1>Prnt.sc <span class="parser">Parser</span> </h1>
     </div>
     <h3>Enter the amount of photos</h3>
     <div class="controls">
@@ -113,5 +116,19 @@ export default {
 }
 .controls button:disabled {
   opacity: 0.4;
+}
+.github{
+  position: absolute;
+    top: 40px;
+    right: 20px;
+    border-radius: 18px;
+     background: linear-gradient(135deg, rgba(255, 0, 0, 0.3) 0%, rgb(11, 112, 244) 100% );
+    box-shadow: 3px 3px 8px 0px rgb(0 0 0 / 30%);
+}
+.github a{
+    padding:30px;
+    font-size:150%;
+    color:greenyellow;
+    text-decoration: none;
 }
 </style>
