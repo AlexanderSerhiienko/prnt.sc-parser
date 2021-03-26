@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import consola from 'consola'
+import path from 'path'
 import { generateRandomId, parsePrntScId } from './utils.js'
 import config from './config.js'
 const app = express()
@@ -31,12 +32,21 @@ app.get('/rimg', async (_, res) => {
   while (!src) {
     id = generateRandomId()
     consola.info(`Trying to parse id ${id}...`)
-    src = await parsePrntScId(id)
+    src = await parsePrntScId(id, ceche)
     if (!src) consola.error('Error during parsing id', id)
   }
   consola.success('Parsed id', id, src)
   res.json({ url: src, id })
 })
+
+if (process.env.NODE_ENV === 'production') {
+  console.log('Connecting Vue client')
+  app.use('/', express.static(path.resolve('client', 'dist')))
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve('client', 'build', 'index.html'))
+  })
+}
 
 app.listen(PORT, async () => {
   consola.info(`Server is running on port ${PORT}`)

@@ -14,7 +14,7 @@ export function generateRandomId(size = 6) {
   return result
 }
 
-export async function parsePrntScId(id) {
+export async function parsePrntScId(id, ceche) {
   try {
     const page = await browser.newPage()
     await page.goto(`https://prnt.sc/${id}`)
@@ -35,7 +35,8 @@ export async function parsePrntScId(id) {
       imageSrc = `${config.API_URL}/img/${id}`
     }
     return imageSrc
-  } catch {
+  } catch (e) {
+    consola.error(e)
     return null
   }
 }
