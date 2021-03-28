@@ -12,16 +12,21 @@ export default {
   components: {
     Picture
   },
-  props: ['pictures']
+  computed: {
+    pictures() {
+      return this.$store.getters.pictures
+    }
+  }
 }
 </script>
 <style scoped>
 .picture-box {
   display: flex;
   width: 100%;
-  min-height: calc(100vh - 400px);
+  min-height: calc(100vh - 457px);
   flex-wrap: wrap;
   justify-items: center;
   padding-bottom: 260px;
 }
+
 </style>

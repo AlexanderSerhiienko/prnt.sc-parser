@@ -11,7 +11,8 @@ export default {
 <style scoped>
 img {
   border: 1px solid black;
-  max-width: 500px;
+  max-width: 90%;
+  width: 500px;
   height: auto;
   margin: 10px;
   border-radius: 10px;

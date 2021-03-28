@@ -1,11 +1,9 @@
 <template>
   <div id="app">
     <ControlPanel
-      :loading="loading"
       @start-parsing="startParsing"
-      :picture="pictures"
     />
-    <PictureBox :pictures="pictures" />
+    <PictureBox />
   </div>
 </template>
 
@@ -17,28 +15,23 @@ import { API_URL } from './config'
 
 export default {
   name: 'App',
-  data() {
-    return {
-      pictures: [],
-      loading: false
-    }
-  },
   components: {
     PictureBox,
     ControlPanel
   },
   methods: {
     async startParsing(number) {
-      this.pictures = []
-      this.loading = true
+      this.$store.commit('SET_COUNTER', number)
+      this.$store.commit('CLEAR_PICTURES')
+      this.$store.commit('SHOW_LOADER')
       for (let i = 0; i < number; i++) {
         const { data } = await axios.get(`${API_URL}/rimg`)
-        this.pictures.push(data)
+        this.$store.commit('ADD_PICTURE', data)
+        this.$store.commit('INCREMENT_COUNTER')
         setTimeout(() => this.scrollBottom(), 100)
       }
       setTimeout(() => this.scrollTop(), 100)
-
-      this.loading = false
+      this.$store.commit('HIDE_LOADER')
     },
     scrollBottom() {
       const el = document.getElementById('scroll-bottom')
@@ -62,10 +55,19 @@ body {
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
     'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   color: white;
+
 }
 
 html {
   background: linear-gradient(
+      135deg,
+      rgba(11, 111, 244, 1) 0%,
+      rgba(146, 72, 238, 1) 100%
+    )
+    no-repeat center center / 100% 100%;
+}
+html{
+   background: linear-gradient(
       135deg,
       rgba(11, 111, 244, 1) 0%,
       rgba(146, 72, 238, 1) 100%
