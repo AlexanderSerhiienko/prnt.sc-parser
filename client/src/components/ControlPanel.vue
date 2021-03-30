@@ -1,29 +1,40 @@
 <template>
   <div class="wrapper">
     <div class="github">
-      <a href="https://github.com/AlexanderSerhiienko/prnt.sc-parser" target="_blank">
-       Github
+      <a
+        href="https://github.com/AlexanderSerhiienko/prnt.sc-parser"
+        target="_blank"
+      >
+        <font-awesome-icon class="github-icon" :icon="['fab', 'github']" />
       </a>
     </div>
     <div id="scroll-top"></div>
     <div class="logo">
-      <h1>Prnt.sc <span class="parser">Parser</span> </h1>
+      <h1>Prnt.sc <span class="parser">Parser</span></h1>
     </div>
     <h3>Enter the amount of photos</h3>
     <div class="controls">
-      <input type="number" v-model="text" @keypress.enter="onSubmit" @change="checkInput" min="0" /> 
+      <input
+        type="number"
+        v-model="text"
+        @keypress.enter="onSubmit"
+        @change="checkInput"
+        min="0"
+      />
       <!-- maxlength not working idk why-->
       <button :disabled="loading" @click="onSubmit">
-       <font-awesome-icon class ="searchIcon" icon="search"/>
+        <div class="button-background">
+          <font-awesome-icon class="searchIcon" icon="search" />
+        </div>
       </button>
     </div>
-    <transition 
+    <transition
       enter-active-class="animate__animated animate__fadeInRight"
       leave-active-class="animate__animated animate__fadeOutRight"
     >
       <div v-if="loading" class="ui-wrapper">
         <div class="counter">
-          <span>{{counter.current}}/{{counter.total}}</span>
+          <span>{{ counter.current }}/{{ counter.total }}</span>
         </div>
         <div class="indicator">
           <Loading />
@@ -40,7 +51,7 @@ export default {
     return {
       maxl: 5,
       text: '',
-      validation:true
+      validation: true
     }
   },
   components: {
@@ -62,13 +73,12 @@ export default {
     }
   },
   watch: {
-    text (value) {
-      if(+value<0)
-      {
-        this.text=-(+value)
+    text(value) {
+      if (+value < 0) {
+        this.text = -+value
       }
-      if(+value>9999){
-        this.text=9999
+      if (+value > 9999) {
+        this.text = 9999
       }
     }
   }
@@ -100,6 +110,8 @@ export default {
   align-items: center;
   flex-direction: column;
   padding-top: 20px;
+  min-height: 198px;
+  box-sizing: border-box;
 }
 
 .logo {
@@ -128,7 +140,7 @@ export default {
   align-items: center;
 }
 .controls input {
-  margin-right:-35px;
+  margin-right: -35px;
   border-radius: 50px;
   border: none;
   outline: none;
@@ -136,16 +148,24 @@ export default {
   padding: 0px 10px;
   width: 70px;
   height: 40px;
- -webkit-appearance: none;
+  -webkit-appearance: none;
 }
 .controls button {
-  border-radius: 50%;
   border: none;
   outline: none;
-  margin-left: 10px;
-  padding: 9px;
   cursor: pointer;
-  width:50px;
+  padding: 0px;
+  margin-left: 10px;
+  width: 50px;
+  height: 50px;
+  background: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.controls button .button-background {
+  border-radius: 50%;
+  width: 50px;
   height: 50px;
   background: linear-gradient(
     135deg,
@@ -154,32 +174,50 @@ export default {
   );
   color: white;
   text-transform: uppercase;
-   box-shadow: 1px 1px 15px 0px rgb(0 0 0 / 30%);
+  box-shadow: 1px 1px 15px 0px rgb(0 0 0 / 30%);
+  transition: 0.2s ease-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+}
+.controls button:hover {
+}
+
+.controls button:active .button-background {
+  width: 45px;
+  height: 45px;
+}
+.controls button:disabled .searchIcon {
+  color: red;
+}
+.github {
+  position: absolute;
+  font-size: 20px;
+  top: 20px;
+  right: 20px;
+  border-radius: 24px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 0, 0, 0.3) 0%,
+    rgb(11, 112, 244) 100%
+  );
+  box-shadow: 3px 3px 8px 0px rgb(0 0 0 / 30%);
   transition: 0.2s;
 }
-.controls button:hover  {
-  
-}
-.controls button:disabled .searchIcon{
-  color:red;  
-}
-.github{
-  position: absolute;
-    top: 40px;
-    right: 20px;
-    border-radius: 18px;
-     background: linear-gradient(135deg, rgba(255, 0, 0, 0.3) 0%, rgb(11, 112, 244) 100% );
-    box-shadow: 3px 3px 8px 0px rgb(0 0 0 / 30%);
-    transition: 0.2s;
-}
-.github:hover{
+.github:hover {
   opacity: 0.6;
 }
-.github a{
-    padding:30px;
-    font-size:150%;
-    color:greenyellow;
-    text-decoration: none;
+.github a {
+  padding: 30px;
+  font-size: 150%;
+  color: greenyellow;
+  text-decoration: none;
 }
 .counter {
   /* padding:10px;
@@ -198,14 +236,14 @@ export default {
   border-bottom-left-radius: 20px;
   padding-left: 15px;
   font-weight: bold;
-  font-size:110%;
+  font-size: 110%;
 }
 
-.counter a{
-  margin:0;
+.counter a {
+  margin: 0;
 }
-.searchIcon{
-  color:greenyellow;
+.searchIcon {
+  color: greenyellow;
   transition: 0.2s;
 }
 @media only screen and (max-width: 600px) {
