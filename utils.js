@@ -2,7 +2,12 @@ import puppeteer from 'puppeteer'
 import config from './config.js'
 import consola from 'consola'
 consola.info('Starting browser instance...')
-const browser = await puppeteer.launch()
+const browser = await puppeteer.launch({
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+  ],
+})
 
 export function generateRandomId(size = 6) {
   let result = ''
