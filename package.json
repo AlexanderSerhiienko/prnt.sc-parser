@@ -9,7 +9,9 @@
     "start:prod": "cross-env NODE_ENV=production node index",
     "dev": "nodemon index",
     "dev:client": "npm run serve --prefix client",
-    "build:client": "npm run build --prefix client"
+    "build:client": "npm run build --prefix client",
+    "install:client": "npm install --prefix client",
+    "heroku-prebuild": "npm run install:client && npm run build:client"
   },
   "keywords": [],
   "author": "",
