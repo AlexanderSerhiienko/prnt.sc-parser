@@ -214,6 +214,7 @@ export default {
   opacity: 0.6;
 }
 .github a {
+  margin-top:2px;
   padding: 30px;
   font-size: 150%;
   color: greenyellow;
