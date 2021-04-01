@@ -18,6 +18,9 @@
     "vue": "^3.0.0",
     "vuex": "^4.0.0"
   },
+  "engines": {
+    "node": "14.x"
+  },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
