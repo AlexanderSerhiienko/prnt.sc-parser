@@ -42,9 +42,12 @@ export async function parsePrntScId(id, ceche) {
       ceche[id] = imgBuffer
       imageSrc = `${config.API_URL}/img/${id}`
     }
+    browser.close()
     return imageSrc
   } catch (e) {
     consola.error(e)
+    browser.close()
+
     return null
   }
 }
