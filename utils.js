@@ -1,10 +1,6 @@
 import puppeteer from 'puppeteer'
 import config from './config.js'
 import consola from 'consola'
-consola.info('Starting browser instance...')
-const browser = await puppeteer.launch({
-  args: ['--no-sandbox', '--disable-setuid-sandbox']
-})
 
 export function generateRandomId(size = 6) {
   let result = ''
@@ -18,6 +14,10 @@ export function generateRandomId(size = 6) {
 
 export async function parsePrntScId(id, ceche) {
   try {
+    consola.info('Starting browser instance...')
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    })
     const page = await browser.newPage()
     page.setDefaultNavigationTimeout(0)
     consola.info(`Parsing page with id ${id}`)
