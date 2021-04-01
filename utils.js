@@ -24,11 +24,12 @@ export async function parsePrntScId(id, ceche) {
     await page.goto(`https://prnt.sc/${id}`)
     consola.info(`Page parsed with id ${id}!`)
     let imageSrc = await page.evaluate(() => {
-      consola.info(`Evaluating page with id ${id}`)
       const $image = document.querySelector('#screenshot-image')
       const src = $image.getAttribute('src')
       return src
     })
+    consola.info(`Evaluated page with id ${id}`)
+
     if (!imageSrc) return null
 
     const viewSource = await page.goto(imageSrc)
