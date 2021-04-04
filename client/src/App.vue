@@ -34,10 +34,12 @@ export default {
       this.$store.commit('HIDE_LOADER')
     },
     scrollBottom() {
+      if(!this.$store.getters.scroll) return
       const el = document.getElementById('scroll-bottom')
       el.scrollIntoView({ behavior: 'smooth' })
     },
     scrollTop() {
+      if(!this.$store.getters.scroll) return
       const el = document.getElementById('scroll-top')
       el.scrollIntoView({ behavior: 'smooth' })
     }

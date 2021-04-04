@@ -14,7 +14,12 @@ img {
   max-width: 90%;
   width: 500px;
   height: auto;
-  margin: 10px;
+  margin: auto;
   border-radius: 10px;
+}
+@media only screen and (max-width: 500px) {
+  img {
+    margin-left:15px;
+  }
 }
 </style>

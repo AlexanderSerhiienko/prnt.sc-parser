@@ -21,7 +21,6 @@
         @change="checkInput"
         min="0"
       />
-      <!-- maxlength not working idk why-->
       <button :disabled="loading" @click="onSubmit">
         <div class="button-background">
           <font-awesome-icon class="searchIcon" icon="search" />
@@ -34,7 +33,13 @@
     >
       <div v-if="loading" class="ui-wrapper">
         <div class="counter">
+          <span class="checkbox">
+            <!-- <span class="checkbox-hint">Auto-Scroll</span> -->
+            <input type="checkbox" :checked="scrollState" @change="checkboxState($event)" >
+            </span>
           <span>{{ counter.current }}/{{ counter.total }}</span>
+            
+          
         </div>
         <div class="indicator">
           <Loading />
@@ -62,6 +67,9 @@ export default {
       if (this.loading) return
       this.$emit('start-parsing', parseInt(this.text))
       this.text = ''
+    },
+    checkboxState(event){
+      this.$store.commit('SET_SCROLL', event.target.checked)
     }
   },
   computed: {
@@ -70,6 +78,9 @@ export default {
     },
     counter() {
       return this.$store.getters.counter
+    },
+    scrollState(){
+      return this.$store.getters.scroll
     }
   },
   watch: {
@@ -91,6 +102,7 @@ export default {
   right: 10px;
   align-items: center;
   display: flex;
+  z-index: 2;
 }
 
 .indicator {
@@ -181,9 +193,6 @@ export default {
   align-items: center;
   font-size: 18px;
 }
-.controls button:hover {
-}
-
 .controls button:active .button-background {
   width: 45px;
   height: 45px;
@@ -221,13 +230,8 @@ export default {
   text-decoration: none;
 }
 .counter {
-  /* padding:10px;
-  box-shadow: 3px 3px 8px 0px rgb(0 0 0 / 30%);
-  background: linear-gradient(135deg, rgba(255, 0, 0, 0.3) 0%, rgb(11, 112, 244) 100% );
-  border-radius: 18px; */
   color: blueviolet;
   background: white;
-  /* width: 100px; */
   height: 50px;
   display: flex;
   align-items: center;
@@ -247,7 +251,65 @@ export default {
   color: greenyellow;
   transition: 0.2s;
 }
-@media only screen and (max-width: 600px) {
+
+/* .checkbox-hint{
+  background: grey;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+}
+.checkbox-hint::after{
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgb(0, 0, 0) transparent transparent transparent;
+} */
+.checkbox {
+  position: relative;
+}
+.checkbox::after {
+  content: 'Auto-Scroll';
+  background: grey;
+  opacity: 0;
+  transition: opacity 0.3s;
+  position: absolute;
+  bottom: 25px;
+  right:-30px;
+  min-width: 68px;
+  border-radius: 12px;
+  padding: 5px;
+  color: white;
+  background: rgba(11, 111, 244, 1);
+  font-size: 12px;
+}
+.checkbox::before {
+  content: '';
+  position: absolute;
+  content: "";
+  position: absolute;
+  transition: opacity 0.3s;
+  opacity: 0;
+  top: -5px;
+  left: 53%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(11, 111, 244, 1) transparent transparent transparent;
+}
+.checkbox:hover::after {
+  opacity: 1;
+}
+.checkbox:hover::before {
+  opacity: 1;
+}
+@media only screen and (max-width: 500px) {
   .github {
     display: none;
   }

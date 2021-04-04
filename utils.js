@@ -2,6 +2,10 @@ import puppeteer from 'puppeteer'
 import config from './config.js'
 import consola from 'consola'
 
+const browser = await puppeteer.launch({
+  args: ["--no-sandbox", "--disable-setuid-sandbox"],
+});
+
 export function generateRandomId(size = 6) {
   let result = ''
   const characters = 'abcdefghijklmnopqrstuvwxyz0123456789'
@@ -13,12 +17,9 @@ export function generateRandomId(size = 6) {
 }
 
 export async function parsePrntScId(id, ceche) {
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  })
-  try {
-    consola.info('Starting browser instance...')
+  consola.info('Starting browser instance...')
     const page = await browser.newPage()
+  try {
     page.setDefaultNavigationTimeout(0)
     consola.info(`Parsing page with id ${id}`)
     await page.goto(`https://prnt.sc/${id}`)
@@ -30,25 +31,35 @@ export async function parsePrntScId(id, ceche) {
     })
     consola.info(`Evaluated page with id ${id}`)
 
-    if (!imageSrc) return null
-
+    if (!imageSrc) {
+      await page.close()
+      return null
+    }
+    if(imageSrc.includes('st.prntscr.com')){
+      await page.close()
+      return null
+    }
     const viewSource = await page.goto(imageSrc)
     const url = await page.evaluate(() => {
       return window.location.href
     })
-    if (url.includes('removed.png')) return null
+    console.log(url)
+    if (url.includes('removed.png')) {
+      await page.close()
+      return null
+    } 
+   
     if (imageSrc.includes('prntscr')) {
       const imgBuffer = await viewSource.buffer()
       ceche[id] = imgBuffer
       imageSrc = `${config.API_URL}/img/${id}`
     }
-    consola.info('Closing browser instance...')
-    await browser.close()
+    consola.info('Closing tab...')
+    await page.close()
     return imageSrc
   } catch (e) {
-    consola.error(e)
-    consola.info('Closing browser instance...')
-    await browser.close()
+    consola.error(e.message)
+    await page.close()
     return null
   }
 }

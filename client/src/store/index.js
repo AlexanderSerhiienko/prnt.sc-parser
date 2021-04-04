@@ -5,7 +5,8 @@ export default createStore({
     pictures: [],
     total: 0,
     current: 0,
-    loading: false
+    loading: false,
+    scroll: false
   },
   mutations: {
     ADD_PICTURE(state, picture) {
@@ -26,6 +27,9 @@ export default createStore({
     },
     CLEAR_PICTURES(state) {
       state.pictures = []
+    },
+    SET_SCROLL(state, checked){
+      state.scroll=checked
     }
   },
   getters: {
@@ -36,6 +40,7 @@ export default createStore({
         total: state.total,
         current: state.current
       } 
-    }
+    },
+    scroll: state => state.scroll
   }
 })
