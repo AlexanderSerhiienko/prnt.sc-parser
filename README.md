@@ -13,6 +13,8 @@ Fullstack project which parse images from site prnt.sc and shows them on client
 
 - [Express](https://expressjs.com/)
 
+- [Puppeteer](https://pptr.dev/)
+
 ## Installation
 
 ```bash
