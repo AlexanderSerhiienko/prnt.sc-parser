@@ -1,53 +1,65 @@
-<h1 align="center">Prnt.sc Parser</h1>
+# Prnt.sc Parser
 
-## Description
-Fullstack project which parse images from site prnt.sc and shows them on client
+Full-stack app that searches random `prnt.sc` ids, validates screenshot pages through Puppeteer, and renders the results in a refreshed Vue 3 gallery.
 
-![img](./screenshot.png)
+## Tech
 
-## Technologies
+- Express
+- Puppeteer
+- Vue 3
+- Vuex 4
+- Vite
 
-- [Vue3](https://v3.vuejs.org/)
+## Environment
 
-- [Vuex](https://vuex.vuejs.org/)
+Server variables live in [.env.example](/Users/alexserhiienko/Documents/GitHub/prnt.sc-parser/.env.example).
 
-- [Express](https://expressjs.com/)
+Client variables live in [client/.env.example](/Users/alexserhiienko/Documents/GitHub/prnt.sc-parser/client/.env.example).
 
-- [Puppeteer](https://pptr.dev/)
+Important defaults:
 
-## Installation
+- Server runs on `http://localhost:3001`
+- Vite client runs on `http://localhost:5173`
+- Client API base defaults to `http://localhost:3001`
 
-```bash
-# backend dependencies
-$ npm install
-```
-
-```bash
-# frontend/client dependencies
-$ npm install
-```
-
-## Running the app
-
-### Backend:
+## Install
 
 ```bash
-# backend development
-$ npm run start
-
+npm install
+npm run install:client
 ```
 
-### Frontend:
+## Run in Development
+
+Backend:
 
 ```bash
-# frontend/client development
-$ npm run serve
+npm run dev
 ```
 
-# Todo
+Frontend:
 
-- [X] Add checkbox for scrolling
-- [ ] Style scrolling checkbox
-- [X] Mobile version
-- [ ] Scroll down button
+```bash
+npm run dev:client
+```
 
+## Production Build
+
+```bash
+npm run build:client
+npm run start:prod
+```
+
+In production the Express server serves the built Vite client from `client/dist`.
+
+## API
+
+`GET /rimg`
+
+- Success: `{ "id": "abc123", "url": "..." }`
+- Error: `{ "code": "PARSE_RETRY_LIMIT_EXCEEDED", "message": "..." }`
+
+`GET /img/:id`
+
+- Returns a cached proxied image when the parser decides proxying is needed
+- Returns `404` if the image is missing or expired

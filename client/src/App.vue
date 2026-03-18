@@ -1,79 +1,99 @@
 <template>
-  <div id="app">
-    <ControlPanel
-      @start-parsing="startParsing"
-    />
-    <PictureBox />
+  <div class="app-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Random screenshot explorer</p>
+        <h1>Prnt.sc Parser</h1>
+        <p class="lead">
+          Generate a batch, watch the gallery fill up, and keep the fun chaos of the
+          original project without the brittle prototype edges.
+        </p>
+      </div>
+      <ControlPanel />
+    </header>
+
+    <main class="content">
+      <PictureBox />
+    </main>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
-import ControlPanel from '@/components/ControlPanel'
-import PictureBox from '@/components/PictureBox'
-import { API_URL } from './config'
+import ControlPanel from "@/components/ControlPanel.vue";
+import PictureBox from "@/components/PictureBox.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
+    ControlPanel,
     PictureBox,
-    ControlPanel
   },
-  methods: {
-    async startParsing(number) {
-      this.$store.commit('SET_COUNTER', number)
-      this.$store.commit('CLEAR_PICTURES')
-      this.$store.commit('SHOW_LOADER')
-      for (let i = 0; i < number; i++) {
-        const { data } = await axios.get(`${API_URL}/rimg`)
-        this.$store.commit('ADD_PICTURE', data)
-        this.$store.commit('INCREMENT_COUNTER')
-        setTimeout(() => this.scrollBottom(), 100)
-      }
-      setTimeout(() => this.scrollTop(), 100)
-      this.$store.commit('HIDE_LOADER')
-    },
-    scrollBottom() {
-      if(!this.$store.getters.scroll) return
-      const el = document.getElementById('scroll-bottom')
-      el.scrollIntoView({ behavior: 'smooth' })
-    },
-    scrollTop() {
-      if(!this.$store.getters.scroll) return
-      const el = document.getElementById('scroll-top')
-      el.scrollIntoView({ behavior: 'smooth' })
-    }
-  }
-}
+};
 </script>
 
-<style>
-html,
-body {
-  width: 100%;
-  height: fit-content;
+<style scoped>
+.app-shell {
+  width: min(1200px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(320px, 420px);
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.hero-copy {
+  padding: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 32px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+    rgba(5, 10, 25, 0.4);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.eyebrow {
+  margin: 0 0 1rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.hero-copy h1 {
   margin: 0;
-  padding: 0;
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
-    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  color: white;
-
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 0.96;
 }
 
-html {
-  background: linear-gradient(
-      135deg,
-      rgba(11, 111, 244, 1) 0%,
-      rgba(146, 72, 238, 1) 100%
-    )
-    no-repeat center center / 100% 100%;
+.lead {
+  max-width: 32rem;
+  margin: 1.25rem 0 0;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
 }
-html{
-   background: linear-gradient(
-      135deg,
-      rgba(11, 111, 244, 1) 0%,
-      rgba(146, 72, 238, 1) 100%
-    )
-    no-repeat center center / 100% 100%;
+
+.content {
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 920px) {
+  .app-shell {
+    width: min(100% - 1rem, 1200px);
+    padding-top: 1rem;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-copy {
+    padding: 1.5rem;
+  }
 }
 </style>

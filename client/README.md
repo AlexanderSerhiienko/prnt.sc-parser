@@ -1,24 +1,19 @@
-# prntscrparser
+# Client
 
-## Project setup
-```
-npm install
-```
+Vite-powered Vue 3 frontend for the Prnt.sc Parser gallery.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Scripts
 
-### Compiles and minifies for production
-```
+```bash
+npm run dev
 npm run build
+npm run preview
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Environment
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Create a `.env` file from [.env.example](/Users/alexserhiienko/Documents/GitHub/prnt.sc-parser/client/.env.example) if you want to override the API URL:
+
+```bash
+VITE_API_URL=http://localhost:3001
+```

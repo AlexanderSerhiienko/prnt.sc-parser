@@ -1,317 +1,337 @@
 <template>
-  <div class="wrapper">
-    <div class="github">
+  <section class="panel">
+    <div class="panel-top">
+      <div>
+        <p class="panel-label">Control center</p>
+        <h2>Build a screenshot batch</h2>
+      </div>
+
       <a
+        class="github-link"
         href="https://github.com/AlexanderSerhiienko/prnt.sc-parser"
         target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open GitHub repository"
       >
-        <font-awesome-icon class="github-icon" :icon="['fab', 'github']" />
+        <font-awesome-icon :icon="['fab', 'github']" />
       </a>
     </div>
-    <div id="scroll-top"></div>
-    <div class="logo">
-      <h1>Prnt.sc <span class="parser">Parser</span></h1>
-    </div>
-    <h3>Enter the amount of photos</h3>
-    <div class="controls">
-      <input
-        type="number"
-        v-model="text"
-        @keypress.enter="onSubmit"
-        @change="checkInput"
-        min="0"
-      />
-      <button :disabled="loading" @click="onSubmit">
-        <div class="button-background">
-          <font-awesome-icon class="searchIcon" icon="search" />
-        </div>
-      </button>
-    </div>
-    <transition
-      enter-active-class="animate__animated animate__fadeInRight"
-      leave-active-class="animate__animated animate__fadeOutRight"
-    >
-      <div v-if="loading" class="ui-wrapper">
-        <div class="counter">
-          <span class="checkbox">
-            <!-- <span class="checkbox-hint">Auto-Scroll</span> -->
-            <input type="checkbox" :checked="scrollState" @change="checkboxState($event)" >
-            </span>
-          <span>{{ counter.current }}/{{ counter.total }}</span>
-            
-          
-        </div>
-        <div class="indicator">
-          <Loading />
-        </div>
+
+    <form class="search-form" @submit.prevent="submit">
+      <label class="input-label" for="amount">How many screenshots?</label>
+      <div class="input-row">
+        <input
+          id="amount"
+          v-model="inputValue"
+          type="number"
+          min="1"
+          :max="maxRequestCount"
+          inputmode="numeric"
+          placeholder="8"
+        />
+        <button class="submit-button" type="submit" :disabled="!isValidInput">
+          <font-awesome-icon :icon="loading ? 'redo-alt' : 'search'" />
+          <span>{{ buttonLabel }}</span>
+        </button>
       </div>
-    </transition>
-  </div>
+      <p class="field-hint">Pick a value from 1 to {{ maxRequestCount }}.</p>
+    </form>
+
+    <div class="panel-status">
+      <div class="status-tile">
+        <span class="status-label">Completed</span>
+        <strong>{{ progress.completed }}/{{ progress.total || 0 }}</strong>
+      </div>
+      <div class="status-tile">
+        <span class="status-label">Successful</span>
+        <strong>{{ progress.successful }}</strong>
+      </div>
+      <div class="status-tile">
+        <span class="status-label">Missed</span>
+        <strong>{{ progress.failures }}</strong>
+      </div>
+    </div>
+
+    <label class="toggle">
+      <input type="checkbox" :checked="autoScroll" @change="toggleScroll" />
+      <span>Auto-scroll gallery as new screenshots arrive</span>
+    </label>
+
+    <div v-if="loading" class="progress-card">
+      <Loading />
+      <div>
+        <strong>Parsing screenshots...</strong>
+        <p>Starting a new run replaces the current one cleanly.</p>
+      </div>
+    </div>
+
+    <p v-if="notice" class="message message-notice">{{ notice }}</p>
+    <p v-if="error" class="message message-error">
+      <font-awesome-icon icon="exclamation-circle" />
+      <span>{{ error }}</span>
+    </p>
+  </section>
 </template>
+
 <script>
-import Loading from './Loading.vue'
+import Loading from "./Loading.vue";
+import { MAX_REQUEST_COUNT } from "../config";
 
 export default {
+  name: "ControlPanel",
+  components: {
+    Loading,
+  },
   data() {
     return {
-      maxl: 5,
-      text: '',
-      validation: true
-    }
-  },
-  components: {
-    Loading
-  },
-  methods: {
-    onSubmit() {
-      if (this.loading) return
-      this.$emit('start-parsing', parseInt(this.text))
-      this.text = ''
-    },
-    checkboxState(event){
-      this.$store.commit('SET_SCROLL', event.target.checked)
-    }
+      inputValue: "8",
+      maxRequestCount: MAX_REQUEST_COUNT,
+    };
   },
   computed: {
     loading() {
-      return this.$store.getters.loading
+      return this.$store.getters.loading;
     },
-    counter() {
-      return this.$store.getters.counter
+    progress() {
+      return this.$store.getters.progress;
     },
-    scrollState(){
-      return this.$store.getters.scroll
-    }
+    autoScroll() {
+      return this.$store.getters.autoScroll;
+    },
+    notice() {
+      return this.$store.getters.notice;
+    },
+    error() {
+      return this.$store.getters.error;
+    },
+    normalizedInput() {
+      const parsedValue = Number.parseInt(this.inputValue, 10);
+
+      if (Number.isNaN(parsedValue)) {
+        return null;
+      }
+
+      return parsedValue;
+    },
+    isValidInput() {
+      return this.normalizedInput >= 1 && this.normalizedInput <= this.maxRequestCount;
+    },
+    buttonLabel() {
+      return this.loading ? "Restart run" : "Load screenshots";
+    },
   },
-  watch: {
-    text(value) {
-      if (+value < 0) {
-        this.text = -+value
+  methods: {
+    submit() {
+      if (!this.isValidInput) {
+        return;
       }
-      if (+value > 9999) {
-        this.text = 9999
-      }
-    }
-  }
-}
+
+      this.$store.dispatch("startParsing", this.normalizedInput);
+    },
+    toggleScroll(event) {
+      this.$store.commit("SET_AUTO_SCROLL", event.target.checked);
+    },
+  },
+};
 </script>
+
 <style scoped>
-.ui-wrapper {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  align-items: center;
+.panel {
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 32px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
+    rgba(6, 13, 30, 0.75);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+}
+
+.panel-top {
   display: flex;
-  z-index: 2;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
 }
 
-.indicator {
-  height: 60px;
-  width: 60px;
-  background: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  box-shadow: 1px 1px 15px 0px rgb(0 0 0 / 30%);
-}
-
-.wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding-top: 20px;
-  min-height: 198px;
-  box-sizing: border-box;
-}
-
-.logo {
-  background: linear-gradient(
-    135deg,
-    rgba(166, 238, 72, 0.3) 0%,
-    rgba(11, 111, 244, 0.3) 100%
-  );
-  border-radius: 18px;
-  padding: 15px;
-  width: fit-content;
-  box-shadow: 3px 3px 8px 0px rgba(0, 0, 0, 0.3);
-  color: white;
-}
-
-.logo h1 {
+.panel-label {
   margin: 0;
-}
-.parser {
-  color: greenyellow;
-}
-
-.controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.controls input {
-  margin-right: -35px;
-  border-radius: 50px;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  padding: 0px 10px;
-  width: 70px;
-  height: 40px;
-  -webkit-appearance: none;
-}
-.controls button {
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 0px;
-  margin-left: 10px;
-  width: 50px;
-  height: 50px;
-  background: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.controls button .button-background {
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(
-    135deg,
-    rgba(73, 72, 238, 1) 0%,
-    rgba(114, 11, 244, 1) 100%
-  );
-  color: white;
+  color: var(--accent);
   text-transform: uppercase;
-  box-shadow: 1px 1px 15px 0px rgb(0 0 0 / 30%);
-  transition: 0.2s ease-out;
-  display: flex;
-  justify-content: center;
+  letter-spacing: 0.14em;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.panel-top h2 {
+  margin: 0.4rem 0 0;
+  font-size: 1.6rem;
+}
+
+.github-link {
+  display: inline-flex;
   align-items: center;
-  font-size: 18px;
-}
-.controls button:active .button-background {
-  width: 45px;
-  height: 45px;
-}
-.controls button:disabled .searchIcon {
-  color: red;
-}
-.github {
-  position: absolute;
-  font-size: 20px;
-  top: 20px;
-  right: 20px;
-  border-radius: 24px;
-  width: 50px;
-  height: 50px;
-  display: flex;
   justify-content: center;
-  align-items: center;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 0, 0, 0.3) 0%,
-    rgb(11, 112, 244) 100%
-  );
-  box-shadow: 3px 3px 8px 0px rgb(0 0 0 / 30%);
-  transition: 0.2s;
-}
-.github:hover {
-  opacity: 0.6;
-}
-.github a {
-  margin-top:2px;
-  padding: 30px;
-  font-size: 150%;
-  color: greenyellow;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--accent);
+  font-size: 1.25rem;
   text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
 }
-.counter {
-  color: blueviolet;
-  background: white;
-  height: 50px;
-  display: flex;
+
+.github-link:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.search-form {
+  margin-top: 1.5rem;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-weight: 700;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+}
+
+.input-row input {
+  width: 100%;
+  min-height: 3.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  padding: 0 1rem;
+  color: var(--text-primary);
+  background: rgba(5, 12, 29, 0.72);
+}
+
+.input-row input:focus {
+  outline: 2px solid rgba(201, 255, 59, 0.45);
+  outline-offset: 2px;
+}
+
+.submit-button {
+  display: inline-flex;
   align-items: center;
-  margin-right: -15px;
-  padding-right: 20px;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-  padding-left: 15px;
-  font-weight: bold;
-  font-size: 110%;
+  gap: 0.65rem;
+  min-height: 3.6rem;
+  border: none;
+  border-radius: 18px;
+  padding: 0 1.15rem;
+  background: linear-gradient(135deg, var(--accent) 0%, #7cf5c9 100%);
+  color: #07253f;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 16px 24px rgba(124, 245, 201, 0.18);
 }
 
-.counter a {
-  margin: 0;
-}
-.searchIcon {
-  color: greenyellow;
-  transition: 0.2s;
+.submit-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  box-shadow: none;
 }
 
-/* .checkbox-hint{
-  background: grey;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s;
-  position: absolute;
-  bottom: 125%;
-  left: 50%;
+.field-hint {
+  margin: 0.75rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
 }
-.checkbox-hint::after{
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: rgb(0, 0, 0) transparent transparent transparent;
-} */
-.checkbox {
-  position: relative;
+
+.panel-status {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.5rem;
 }
-.checkbox::after {
-  content: 'Auto-Scroll';
-  background: grey;
-  opacity: 0;
-  transition: opacity 0.3s;
-  position: absolute;
-  bottom: 25px;
-  right:-30px;
-  min-width: 68px;
-  border-radius: 12px;
-  padding: 5px;
-  color: white;
-  background: rgba(11, 111, 244, 1);
-  font-size: 12px;
+
+.status-tile {
+  padding: 0.95rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
-.checkbox::before {
-  content: '';
-  position: absolute;
-  content: "";
-  position: absolute;
-  transition: opacity 0.3s;
-  opacity: 0;
-  top: -5px;
-  left: 53%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: rgba(11, 111, 244, 1) transparent transparent transparent;
+
+.status-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
 }
-.checkbox:hover::after {
-  opacity: 1;
+
+.toggle {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1.25rem;
+  color: var(--text-secondary);
 }
-.checkbox:hover::before {
-  opacity: 1;
+
+.toggle input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--accent);
 }
-@media only screen and (max-width: 500px) {
-  .github {
-    display: none;
+
+.progress-card {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: 20px;
+  background: rgba(255, 143, 92, 0.12);
+  border: 1px solid rgba(255, 143, 92, 0.2);
+}
+
+.progress-card strong {
+  display: block;
+}
+
+.progress-card p {
+  margin: 0.2rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+.message {
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-start;
+  margin: 1rem 0 0;
+  padding: 0.9rem 1rem;
+  border-radius: 18px;
+}
+
+.message-notice {
+  background: rgba(124, 245, 201, 0.12);
+  border: 1px solid rgba(124, 245, 201, 0.18);
+}
+
+.message-error {
+  background: rgba(255, 111, 125, 0.12);
+  border: 1px solid rgba(255, 111, 125, 0.22);
+}
+
+@media (max-width: 920px) {
+  .panel-status {
+    grid-template-columns: 1fr;
+  }
+
+  .input-row {
+    grid-template-columns: 1fr;
+  }
+
+  .submit-button {
+    justify-content: center;
   }
 }
 </style>

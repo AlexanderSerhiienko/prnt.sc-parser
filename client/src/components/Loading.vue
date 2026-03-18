@@ -1,46 +1,44 @@
 <template>
-  <div class="lds-ring">
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
+  <div class="loading-badge" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
   </div>
 </template>
 
-<style>
-.lds-ring {
-  display: inline-block;
-  position: relative;
-  width: 32px;
-  height: 32px;
+<style scoped>
+.loading-badge {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
 }
-.lds-ring div {
-  box-sizing: border-box;
-  display: block;
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  /* margin: 8px; */
-  border: 3px solid blueviolet;
-  border-radius: 50%;
-  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  border-color: blueviolet transparent transparent transparent;
+
+.loading-badge span {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--accent);
+  animation: pulse 0.9s ease-in-out infinite;
 }
-.lds-ring div:nth-child(1) {
-  animation-delay: -0.45s;
+
+.loading-badge span:nth-child(2) {
+  animation-delay: 0.15s;
 }
-.lds-ring div:nth-child(2) {
-  animation-delay: -0.3s;
+
+.loading-badge span:nth-child(3) {
+  animation-delay: 0.3s;
 }
-.lds-ring div:nth-child(3) {
-  animation-delay: -0.15s;
-}
-@keyframes lds-ring {
-  0% {
-    transform: rotate(0deg);
-  }
+
+@keyframes pulse {
+  0%,
   100% {
-    transform: rotate(360deg);
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-0.2rem);
   }
 }
 </style>

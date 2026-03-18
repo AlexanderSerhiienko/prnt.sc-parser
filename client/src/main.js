@@ -1,16 +1,20 @@
-import { createApp } from 'vue'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
-import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import App from './App.vue'
+import { createApp } from "vue";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import {
+  faExclamationCircle,
+  faRedoAlt,
+  faSearch,
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import App from "./App.vue";
+import store from "./store";
+import "./styles.css";
 
-import store from './store'
-
-library.add(faSearch)
-library.add(faGithub)
+library.add(faExclamationCircle, faGithub, faRedoAlt, faSearch, faSpinner);
 
 createApp(App)
   .use(store)
-  .component('font-awesome-icon', FontAwesomeIcon)
-  .mount('#app')
+  .component("font-awesome-icon", FontAwesomeIcon)
+  .mount("#app");

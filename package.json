@@ -5,11 +5,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index",
-    "start:prod": "cross-env NODE_ENV=production node index",
-    "dev": "nodemon index",
-    "dev:client": "npm run serve --prefix client",
+    "start": "node index.js",
+    "start:prod": "cross-env NODE_ENV=production node index.js",
+    "dev": "nodemon index.js",
+    "dev:client": "npm run dev --prefix client",
     "build:client": "npm run build --prefix client",
+    "preview:client": "npm run preview --prefix client",
     "install:client": "npm install --prefix client",
     "heroku-prebuild": "npm run install:client && npm run build:client"
   },
@@ -20,13 +21,10 @@
     "consola": "^2.15.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "puppeteer": "^8.0.0"
+    "puppeteer": "^24.5.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
     "nodemon": "^2.0.7"
-  },
-  "engines": {
-    "node": "14.x"
   }
 }
