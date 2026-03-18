@@ -1,25 +1,26 @@
 :root {
   color-scheme: dark;
-  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  --bg-top: #072d66;
-  --bg-mid: #155eef;
-  --bg-bottom: #2ec5b6;
-  --surface: rgba(9, 18, 39, 0.72);
-  --surface-strong: rgba(7, 15, 32, 0.9);
-  --surface-soft: rgba(255, 255, 255, 0.1);
-  --border: rgba(255, 255, 255, 0.14);
+  --bg-top: #031428;
+  --bg-mid: #08386b;
+  --bg-bottom: #0b7ea0;
+  --surface: rgba(9, 18, 39, 0.78);
+  --surface-strong: rgba(7, 15, 32, 0.92);
+  --surface-soft: rgba(255, 255, 255, 0.08);
+  --border: rgba(164, 212, 255, 0.16);
   --text-primary: #f8fbff;
   --text-secondary: rgba(238, 246, 255, 0.74);
   --accent: #c9ff3b;
-  --accent-2: #ff8f5c;
+  --accent-2: #66e6ff;
   --danger: #ff6f7d;
-  --shadow: 0 24px 60px rgba(2, 7, 23, 0.35);
+  --shadow: 0 28px 70px rgba(2, 7, 23, 0.42);
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(255, 143, 92, 0.16), transparent 25%),
-    linear-gradient(150deg, var(--bg-top) 0%, var(--bg-mid) 48%, var(--bg-bottom) 100%);
+    radial-gradient(circle at top left, rgba(102, 230, 255, 0.16), transparent 26%),
+    radial-gradient(circle at top right, rgba(201, 255, 59, 0.12), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(102, 230, 255, 0.12), transparent 30%),
+    linear-gradient(155deg, var(--bg-top) 0%, var(--bg-mid) 54%, var(--bg-bottom) 100%);
   color: var(--text-primary);
 }
 
@@ -30,9 +31,10 @@
 html {
   min-height: 100%;
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(255, 143, 92, 0.16), transparent 25%),
-    linear-gradient(150deg, var(--bg-top) 0%, var(--bg-mid) 48%, var(--bg-bottom) 100%);
+    radial-gradient(circle at top left, rgba(102, 230, 255, 0.16), transparent 26%),
+    radial-gradient(circle at top right, rgba(201, 255, 59, 0.12), transparent 22%),
+    radial-gradient(circle at bottom right, rgba(102, 230, 255, 0.12), transparent 30%),
+    linear-gradient(155deg, var(--bg-top) 0%, var(--bg-mid) 54%, var(--bg-bottom) 100%);
 }
 
 body {
@@ -51,23 +53,30 @@ body::after {
 }
 
 body::before {
-  top: 8%;
-  left: -4rem;
-  width: 16rem;
-  height: 16rem;
-  border-radius: 50%;
-  background: rgba(201, 255, 59, 0.1);
-  filter: blur(12px);
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40vh;
+  background:
+    linear-gradient(180deg, rgba(164, 212, 255, 0.05), transparent),
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.025) 0,
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px,
+      transparent 18px
+    );
+  filter: none;
 }
 
 body::after {
-  right: -5rem;
-  bottom: 10%;
-  width: 20rem;
-  height: 20rem;
+  right: -4rem;
+  bottom: 8%;
+  width: 22rem;
+  height: 22rem;
   border-radius: 50%;
-  background: rgba(255, 143, 92, 0.16);
-  filter: blur(18px);
+  background: rgba(102, 230, 255, 0.12);
+  filter: blur(28px);
 }
 
 a {
@@ -75,7 +84,8 @@ a {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 

@@ -35,12 +35,19 @@
         </button>
       </div>
       <p class="field-hint">Pick a value from 1 to {{ maxRequestCount }}.</p>
+
+      <label class="input-label secondary-label" for="length">ID length</label>
+      <select id="length" class="length-select" :value="idLength" @change="updateIdLength">
+        <option v-for="option in idLengthOptions" :key="option" :value="option">
+          {{ option }} symbols
+        </option>
+      </select>
     </form>
 
     <div class="panel-status">
       <div class="status-tile">
-        <span class="status-label">Completed</span>
-        <strong>{{ progress.completed }}/{{ progress.total || 0 }}</strong>
+        <span class="status-label">Total parsed</span>
+        <strong>{{ progress.completed }}</strong>
       </div>
       <div class="status-tile">
         <span class="status-label">Successful</span>
@@ -50,6 +57,32 @@
         <span class="status-label">Missed</span>
         <strong>{{ progress.failures }}</strong>
       </div>
+    </div>
+
+    <div class="ops-grid">
+      <article class="ops-card">
+        <span class="ops-label">Hit rate</span>
+        <strong>{{ hitRate }}</strong>
+        <p>Successful finds versus total parsed attempts in the current run.</p>
+      </article>
+
+      <article class="ops-card">
+        <span class="ops-label">Current run</span>
+        <strong>{{ runStatus }}</strong>
+        <p>{{ runDescription }}</p>
+      </article>
+
+      <article class="ops-card">
+        <span class="ops-label">Gallery memory</span>
+        <strong>{{ pictureCount }}</strong>
+        <p>Persistent screenshots currently pinned to the local archive wall.</p>
+      </article>
+
+      <article class="ops-card ops-card-accent">
+        <span class="ops-label">Generator</span>
+        <strong>{{ idLength }}-symbol ids</strong>
+        <p>The current id length used for new search attempts.</p>
+      </article>
     </div>
 
     <label class="toggle">
@@ -75,7 +108,7 @@
 
 <script>
 import Loading from "./Loading.vue";
-import { MAX_REQUEST_COUNT } from "../config";
+import { ID_LENGTH_OPTIONS, MAX_REQUEST_COUNT } from "../config";
 
 export default {
   name: "ControlPanel",
@@ -86,6 +119,7 @@ export default {
     return {
       inputValue: "8",
       maxRequestCount: MAX_REQUEST_COUNT,
+      idLengthOptions: ID_LENGTH_OPTIONS,
     };
   },
   computed: {
@@ -104,6 +138,12 @@ export default {
     error() {
       return this.$store.getters.error;
     },
+    idLength() {
+      return this.$store.getters.idLength;
+    },
+    pictureCount() {
+      return this.$store.getters.pictures.length;
+    },
     normalizedInput() {
       const parsedValue = Number.parseInt(this.inputValue, 10);
 
@@ -119,6 +159,35 @@ export default {
     buttonLabel() {
       return this.loading ? "Restart run" : "Load screenshots";
     },
+    hitRate() {
+      if (!this.progress.completed) {
+        return "0%";
+      }
+
+      return `${Math.round((this.progress.successful / this.progress.completed) * 100)}%`;
+    },
+    runStatus() {
+      if (this.loading) {
+        return "Scanning";
+      }
+
+      if (this.progress.completed > 0) {
+        return "Run complete";
+      }
+
+      return "Standing by";
+    },
+    runDescription() {
+      if (this.loading) {
+        return "The live stream stays open and pushes screenshots into the wall one by one.";
+      }
+
+      if (this.progress.completed > 0) {
+        return "Launch another pass any time without clearing the screenshots you already saved.";
+      }
+
+      return "Set a batch size, choose the id length, and start a new scan.";
+    },
   },
   methods: {
     submit() {
@@ -131,23 +200,46 @@ export default {
     toggleScroll(event) {
       this.$store.commit("SET_AUTO_SCROLL", event.target.checked);
     },
+    updateIdLength(event) {
+      this.$store.commit("SET_ID_LENGTH", Number.parseInt(event.target.value, 10));
+    },
   },
 };
 </script>
 
 <style scoped>
 .panel {
+  position: relative;
   padding: 1.5rem;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(164, 212, 255, 0.18);
   border-radius: 32px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)),
-    rgba(6, 13, 30, 0.75);
+    linear-gradient(180deg, rgba(164, 212, 255, 0.12), rgba(164, 212, 255, 0.03)),
+    rgba(6, 13, 30, 0.9);
   box-shadow: var(--shadow);
   backdrop-filter: blur(12px);
 }
 
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at top right, rgba(201, 255, 59, 0.1), transparent 30%),
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.025) 0,
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px,
+      transparent 20px
+    );
+  pointer-events: none;
+}
+
 .panel-top {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   gap: 1rem;
@@ -189,6 +281,8 @@ export default {
 }
 
 .search-form {
+  position: relative;
+  z-index: 1;
   margin-top: 1.5rem;
 }
 
@@ -246,7 +340,23 @@ export default {
   font-size: 0.92rem;
 }
 
+.secondary-label {
+  margin-top: 1rem;
+}
+
+.length-select {
+  width: 100%;
+  min-height: 3.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  padding: 0 1rem;
+  color: var(--text-primary);
+  background: rgba(5, 12, 29, 0.72);
+}
+
 .panel-status {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
@@ -256,8 +366,8 @@ export default {
 .status-tile {
   padding: 0.95rem;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 22, 46, 0.76);
+  border: 1px solid rgba(164, 212, 255, 0.16);
 }
 
 .status-label {
@@ -267,7 +377,53 @@ export default {
   font-size: 0.85rem;
 }
 
+.ops-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.ops-card {
+  min-height: 124px;
+  padding: 0.95rem 1rem;
+  border-radius: 20px;
+  background: rgba(10, 22, 46, 0.72);
+  border: 1px solid rgba(164, 212, 255, 0.16);
+}
+
+.ops-card-accent {
+  background:
+    linear-gradient(145deg, rgba(201, 255, 59, 0.16), rgba(124, 245, 201, 0.08)),
+    rgba(10, 22, 46, 0.84);
+}
+
+.ops-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: rgba(193, 220, 255, 0.64);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.ops-card strong {
+  display: block;
+  font-size: 1.08rem;
+}
+
+.ops-card p {
+  margin: 0.45rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+
 .toggle {
+  position: relative;
+  z-index: 1;
   display: flex;
   gap: 0.75rem;
   align-items: center;
@@ -282,6 +438,8 @@ export default {
 }
 
 .progress-card {
+  position: relative;
+  z-index: 1;
   display: flex;
   gap: 0.9rem;
   align-items: center;
@@ -303,6 +461,8 @@ export default {
 }
 
 .message {
+  position: relative;
+  z-index: 1;
   display: flex;
   gap: 0.55rem;
   align-items: flex-start;
@@ -323,6 +483,10 @@ export default {
 
 @media (max-width: 920px) {
   .panel-status {
+    grid-template-columns: 1fr;
+  }
+
+  .ops-grid {
     grid-template-columns: 1fr;
   }
 

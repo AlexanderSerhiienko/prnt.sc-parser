@@ -23,3 +23,13 @@ export function withTimeout(promise, timeoutMs, errorMessage) {
     clearTimeout(timeoutId);
   });
 }
+
+export function sleep(delayMs) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, delayMs);
+  });
+}
+
+export function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}

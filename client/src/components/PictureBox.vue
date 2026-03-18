@@ -1,22 +1,25 @@
 <template>
   <section class="gallery-shell">
-    <div v-if="!hasRun" class="empty-state">
-      <p class="empty-label">Ready when you are</p>
-      <h2>Request a batch to start filling the gallery.</h2>
-      <p>
-        The parser will try to find live screenshots and will tell you when a run only
-        lands partial results.
-      </p>
-    </div>
+    <div class="gallery-screen">
+      <div class="screen-grid"></div>
 
-    <div v-else-if="!pictures.length && !loading" class="empty-state">
-      <p class="empty-label">No hits this time</p>
-      <h2>That run came back empty.</h2>
-      <p>Try a fresh batch and the parser will search again with new random ids.</p>
-    </div>
+      <div v-if="!hasRun" class="empty-state">
+        <p class="empty-label">Ready when you are</p>
+        <h2>Start a scan to populate the live wall.</h2>
+        <p>
+          The parser will stream screenshots into the control room as soon as they land.
+        </p>
+      </div>
 
-    <div v-else class="gallery-grid">
-      <Picture v-for="picture in pictures" :key="picture.id" :picture="picture" />
+      <div v-else-if="!pictures.length && !loading" class="empty-state">
+        <p class="empty-label">No hits this time</p>
+        <h2>The wall stayed empty on that pass.</h2>
+        <p>Try another run and the parser will keep scanning fresh random ids.</p>
+      </div>
+
+      <div v-else class="gallery-grid">
+        <Picture v-for="picture in pictures" :key="picture.id" :picture="picture" />
+      </div>
     </div>
 
     <div ref="galleryEnd"></div>
@@ -61,22 +64,82 @@ export default {
 
 <style scoped>
 .gallery-shell {
-  min-height: 20rem;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+}
+
+.gallery-screen {
+  position: relative;
+  overflow: auto;
+  height: 100%;
+  min-height: 0;
+  padding: 1rem;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top, rgba(124, 245, 201, 0.08), transparent 34%),
+    rgba(4, 11, 27, 0.84);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 255, 59, 0.55) rgba(255, 255, 255, 0.08);
+}
+
+.gallery-screen::-webkit-scrollbar {
+  width: 10px;
+}
+
+.gallery-screen::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+
+.gallery-screen::-webkit-scrollbar-thumb {
+  background: rgba(201, 255, 59, 0.45);
+  border-radius: 999px;
+}
+
+.screen-grid {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(201, 255, 59, 0.05), rgba(201, 255, 59, 0.02)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(164, 212, 255, 0.06) 0,
+      rgba(164, 212, 255, 0.06) 1px,
+      transparent 1px,
+      transparent 46px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      rgba(164, 212, 255, 0.06) 0,
+      rgba(164, 212, 255, 0.06) 1px,
+      transparent 1px,
+      transparent 46px
+    );
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.8), transparent 100%);
+  pointer-events: none;
 }
 
 .gallery-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
 }
 
 .empty-state {
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
+  display: grid;
+  place-content: center;
   padding: 2rem;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border: 1px dashed rgba(164, 212, 255, 0.22);
   border-radius: 28px;
-  background: rgba(5, 12, 29, 0.45);
+  background: rgba(7, 15, 32, 0.72);
   text-align: center;
-  box-shadow: var(--shadow);
 }
 
 .empty-label {
@@ -95,5 +158,23 @@ export default {
 .empty-state p:last-child {
   margin: 0;
   color: var(--text-secondary);
+}
+
+@media (max-width: 1120px) {
+  .gallery-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 840px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
